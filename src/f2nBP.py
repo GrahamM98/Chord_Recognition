@@ -1,0 +1,1 @@
+#this net will have one input and 12 outputs
