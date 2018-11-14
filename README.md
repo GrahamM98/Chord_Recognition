@@ -1,12 +1,22 @@
-## Chord_Recognition
+# Chord_Recognition
 This two-part project consists of two neural networks.  One which will identify a note name for a given frequency, and one which will recognize the type of triad three different notes make.
 
-# Training 
+## Training 
   Michael Graham
 
-# Neural Nets
+## Neural Nets
   David Peek
   Mason Pohler
   
-# Testing
+## Testing
   Christian San Juan
+
+## Files
+### f2nBP.py
+  contains backProp for the frequncy to Note Neural Net
+### freq2Note.py
+  contains training and testing for the frequncy to Note Neural Net
+### n2cBP.py
+  contains backProp for the Note to Chord Neural Net
+### notes2Chord.py
+  contains training and testing for the Note to Chord Neural Net
