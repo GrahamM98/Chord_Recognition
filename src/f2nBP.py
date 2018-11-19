@@ -28,7 +28,7 @@ def make_frequency_to_note_neural_net():
 
     # setting up math for backpropagation
     f2n_outputs_clipped = tf.clip_by_value(f2n_output_values, 1e-10, 0.9999999)
-    f2n_cross_enthropy = -tf.reduce_mean(tf.reduce_sum(f2n_outputs * tf.log(f2n_outputs_clipped) + (1 - f2n_outputs) * tf.log(1 - f2n_outputs_clipped), axis=1))
+    f2n_cross_entropy = -tf.reduce_mean(tf.reduce_sum(f2n_outputs * tf.log(f2n_outputs_clipped) + (1 - f2n_outputs) * tf.log(1 - f2n_outputs_clipped), axis=1))
 
     # set up initialisation operator
     f2n_init = tf.global_variables_initializer()
