@@ -69,13 +69,20 @@ def make_frequency_to_note_neural_net():
 
     batch_size = 100
     
+    #test each octave individually
     for octave in range(0, 8):
+                
+        #calculate the start and enc of each octave
         start = 110 * pow(2, octave)
         end = 110 * pow(2, octave+1)
+        
         for epoch in range(0, 100000):
-            #train first net
+                
+            #establish list for the batches of inputs and outputs
             f2n_freq = [0]*batch_size
             correct_out = [None]*batch_size
+            
+            #create batches
             for i in range(batch_size):
                 correct_out[i] = [0]*12
                 f2n_freq[i] = [random.randrange(start, end)]
@@ -91,9 +98,12 @@ def make_frequency_to_note_neural_net():
                 except:
                     continue
 
+            #find accuracy and loss using session
             a, c, _ = f2n_sess.run([f2n_accuracy, f2n_cross_entropy, f2n_train_step], feed_dict={f2n_inputs: f2n_freq, f2n_outputs: correct_out})
 
+            #print data every 1000th iteration
             if (epoch + 1) % 1000 == 0: 
+                #create test data
                 f2n_freq_test = [0]*batch_size
                 correct_out_test = [None]*batch_size
                 for i in range(batch_size):
