@@ -45,10 +45,11 @@ def make_frequency_to_note_neural_net():
 
     # setting up math for backpropagation
     f2n_outputs_clipped = tf.clip_by_value(f2n_output_values, 1e-10, 0.9999999)
-    f2n_cross_entropy = -tf.reduce_mean(tf.reduce_sum(f2n_outputs * tf.log(f2n_outputs_clipped) + (1 - f2n_outputs) * tf.log(1 - f2n_outputs_clipped), axis=1))
+    #f2n_cross_entropy = -tf.reduce_mean(tf.reduce_sum(f2n_outputs * tf.log(f2n_outputs_clipped) + (1 - f2n_outputs) * tf.log(1 - f2n_outputs_clipped), axis=1))
+    f2n_cross_entropy = -tf.reduce_sum(f2n_outputs * tf.log(f2n_outputs_clipped))
 
     #set up optimizer
-    f2n_optimizer = tf.train.GradientDescentOptimizer(0.05)
+    f2n_optimizer = tf.train.GradientDescentOptimizer(0.003)
     f2n_train_step = f2n_optimizer.minimize(f2n_cross_entropy)
 
     # set up initialisation operator
@@ -68,31 +69,52 @@ def make_frequency_to_note_neural_net():
 
     batch_size = 100
     
-    for epoch in range(0, 1000000):
-        #train first net
-        f2n_freq = [0]*batch_size
-        correct_out = [None]*batch_size
-        for i in range(batch_size):
-            correct_out[i] = [0]*12
-            f2n_freq[i] = [random.randrange(0, 23000)]
+    for octave in range(0, 8):
+        start = 110 * pow(2, octave)
+        end = 110 * pow(2, octave+1)
+        for epoch in range(0, 100000):
+            #train first net
+            f2n_freq = [0]*batch_size
+            correct_out = [None]*batch_size
+            for i in range(batch_size):
+                correct_out[i] = [0]*12
+                f2n_freq[i] = [random.randrange(start, end)]
 
-            #find desired note, continue if frequency is invalid
-            try:
-                f2n_desired = aubio.freq2note(f2n_freq[i])[:-1]
-            except:
-                continue
+                #find desired note, continue if frequency is invalid
+                try:
+                    f2n_desired = aubio.freq2note(f2n_freq[i])[:-1]
+                except:
+                    continue
 
+                try:
+                    correct_out[i][noteDict[f2n_desired]-1] = 1
+                except:
+                    continue
 
-            try:
-                correct_out[i][noteDict[f2n_desired]-1] = 1
-            except:
-                continue
+            a, c, _ = f2n_sess.run([f2n_accuracy, f2n_cross_entropy, f2n_train_step], feed_dict={f2n_inputs: f2n_freq, f2n_outputs: correct_out})
 
-        a, c, _ = f2n_sess.run([f2n_accuracy, f2n_cross_entropy, f2n_train_step], feed_dict={f2n_inputs: f2n_freq, f2n_outputs: correct_out})
+            if (epoch + 1) % 1000 == 0: 
+                f2n_freq_test = [0]*batch_size
+                correct_out_test = [None]*batch_size
+                for i in range(batch_size):
+                    correct_out_test[i] = [0]*12
+                    f2n_freq_test[i] = [random.randrange(start, end)]
 
-        if (epoch + 1) % 1000 == 0: 
-            print("Train Data Loss: " + str(c))
-            print("Train Data Accuracy: " + str(100.00*a) + "%")
-            print()
+                    #find desired note, continue if frequency is invalid
+                    try:
+                        f2n_desired = aubio.freq2note(f2n_freq_test[i])[:-1]
+                    except:
+                        continue
+
+                    try:
+                        correct_out_test[i][noteDict[f2n_desired]-1] = 1
+                    except:
+                        continue
+                a_test, _ = f2n_sess.run([f2n_accuracy, f2n_cross_entropy], feed_dict={f2n_inputs: f2n_freq_test, f2n_outputs: correct_out_test})
+
+                print("Train Data Loss: " + str(c))
+                print("Train Data Accuracy: " + str(100.00*a) + "%")
+                print("Test Data Accuracy: " + str(100.00*a_test) + "%")
+                print()
 
     return f2n_sess
