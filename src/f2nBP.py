@@ -17,6 +17,14 @@ noteDict = {
         "G#": 12
     }
 
+#returns the average between two numbers
+def avg(v1, v2):
+    return (v1+v2)/2
+
+#normalizes an input frequency
+def normValue(start, end, freq):
+    return (freq-avg(start, end))/(start/2)
+
 #this net will have one input and 12 outputs
 
 def make_frequency_to_note_neural_net():
@@ -85,7 +93,7 @@ def make_frequency_to_note_neural_net():
             #create batches
             for i in range(batch_size):
                 correct_out[i] = [0]*12
-                f2n_freq[i] = [random.randrange(start, end)]
+                f2n_freq[i] = [normValue(start, end, random.randrange(start, end))]
 
                 #find desired note, continue if frequency is invalid
                 try:
@@ -108,7 +116,7 @@ def make_frequency_to_note_neural_net():
                 correct_out_test = [None]*batch_size
                 for i in range(batch_size):
                     correct_out_test[i] = [0]*12
-                    f2n_freq_test[i] = [random.randrange(start, end)]
+                    f2n_freq_test[i] = [normValue(start, end, random.randrange(start, end))]
 
                     #find desired note, continue if frequency is invalid
                     try:
@@ -125,6 +133,9 @@ def make_frequency_to_note_neural_net():
                 print("Train Data Loss: " + str(c))
                 print("Train Data Accuracy: " + str(100.00*a) + "%")
                 print("Test Data Accuracy: " + str(100.00*a_test) + "%")
+                #print("Test input data: ")
+                #for entry in f2n_freq_test:
+                #    print(entry)
                 print()
 
     return f2n_sess
