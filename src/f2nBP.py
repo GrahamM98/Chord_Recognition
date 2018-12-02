@@ -78,13 +78,15 @@ def make_frequency_to_note_neural_net():
     batch_size = 100
     
     #test each octave individually
-    for octave in range(0, 8):
+    for octave in range(0, 6):
+        
+        print("octave: " + str(octave))
                 
         #calculate the start and enc of each octave
         start = 110 * pow(2, octave)
         end = 110 * pow(2, octave+1)
         
-        for epoch in range(0, 100000):
+        for epoch in range(0, 10000):
                 
             #establish list for the batches of inputs and outputs
             f2n_freq = [0]*batch_size
@@ -93,11 +95,12 @@ def make_frequency_to_note_neural_net():
             #create batches
             for i in range(batch_size):
                 correct_out[i] = [0]*12
-                f2n_freq[i] = [normValue(start, end, random.randrange(start, end))]
+                train_freq = random.randrange(start, end)
+                f2n_freq[i] = [normValue(start, end, train_freq)]
 
                 #find desired note, continue if frequency is invalid
                 try:
-                    f2n_desired = aubio.freq2note(f2n_freq[i])[:-1]
+                    f2n_desired = aubio.freq2note(train_freq)[:-1]
                 except:
                     continue
 
@@ -116,11 +119,12 @@ def make_frequency_to_note_neural_net():
                 correct_out_test = [None]*batch_size
                 for i in range(batch_size):
                     correct_out_test[i] = [0]*12
-                    f2n_freq_test[i] = [normValue(start, end, random.randrange(start, end))]
+                    test_freq = random.randrange(start, end)
+                    f2n_freq_test[i] = [normValue(start, end, test_freq)]
 
                     #find desired note, continue if frequency is invalid
                     try:
-                        f2n_desired = aubio.freq2note(f2n_freq_test[i])[:-1]
+                        f2n_desired = aubio.freq2note(test_freq)[:-1]
                     except:
                         continue
 
