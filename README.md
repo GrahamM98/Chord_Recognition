@@ -18,8 +18,8 @@ This two-part project consists of two neural networks.  One which will identify 
 ### f2nBP.py
 - contains backProp for the frequncy to Note Neural Net
 ### freq2Note.py
-- contains training and testing for the frequncy to Note Neural Net
+- contains testing for the frequncy to Note Neural Net
 ### n2cBP.py
 - contains backProp for the Note to Chord Neural Net
 ### notes2Chord.py
-- contains training and testing for the Note to Chord Neural Net
+- contains testing for the Note to Chord Neural Net
