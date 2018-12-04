@@ -1,5 +1,5 @@
 from f2nBP import make_frequency_to_note_neural_net as trainF2N
-from notes2Chord import trainN2C
+from n2cBP import note_to_chord_neural_net as trainN2C
 from test_funcs import testF2N, testF2C
 from testn2c import testN2C
 # option descriptions

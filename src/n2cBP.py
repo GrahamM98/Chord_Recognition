@@ -1,4 +1,5 @@
 import random
+import tensorflow as tf
 from itertools import permutations as p
 
 noteDict = {
@@ -15,6 +16,46 @@ noteDict = {
         "G": 11,
         "G#": 12
     }
+
+chordDict = {
+        "Major": 0,
+        "Minor": 1,
+        "Augmented": 2,
+        "Diminished": 3,
+        "None": 4
+    }
+
+def findNote(nNum):
+    for entry in noteDict.keys():
+        if nNum == noteDict[entry]:
+            return entry
+    print("%d is an invalid input" % (nNum))
+
+def avg(v1, v2):
+    return (v1+v2)/2
+
+def normValue(start, end, val):
+    return (val-avg(start, end))/(start/2)
+
+
+def findChord(notes):
+    for entry in p(notes):
+        triad = [None]*3
+        for i in range(3):
+            triad[i] = entry[i]
+        if triad[1] < triad[0]:
+            triad[1] += 12
+        if triad[2] < triad[1] or triad[2] < triad[0]:
+            triad[2] += 12 
+        if triad[2]-triad[1] == 3 and triad[1]-triad[0] == 4:
+            return "Major"
+        if triad[2]-triad[1] == 4 and triad[1]-triad[0] == 3:
+            return "Minor"
+        if triad[2]-triad[1] == 4 and triad[1]-triad[0] == 4:
+            return "Augmented"
+        if triad[2]-triad[1] == 3 and triad[1]-triad[0] == 3:
+            return "Diminished"
+        return "None"
 
 def note_to_chord_neural_net():
     # setting up inputs and outputs
@@ -62,23 +103,49 @@ def note_to_chord_neural_net():
     #set up saver to save network
     saver = tf.train.Saver()
 
+    batch_size = 100
 
-def findChord(notes):
-    print("\nChord structure: ", end='')
-    for entry in p(notes):
-        triad = [None]*3
-        for i in range(3):
-            triad[i] = noteDict[entry[i]]
-        if triad[1] < triad[0]:
-            triad[1] += 12
-        if triad[2] < triad[1] or triad[2] < triad[0]:
-            triad[2] += 12 
-        if triad[2]-triad[1] == 3 and triad[1]-triad[0] == 4:
-            return "Major"
-        if triad[2]-triad[1] == 4 and triad[1]-triad[0] == 3:
-            return "Minor"
-        if triad[2]-triad[1] == 4 and triad[1]-triad[0] == 4:
-            return "Augmented"
-        if triad[2]-triad[1] == 3 and triad[1]-triad[0] == 3:
-            return "Diminished"
-        return "None"
+    for epoch in range(10000):
+        n2c_notes = [None]*batch_size
+        n2c_correct_out = [None]*batch_size
+
+        for i in range(batch_size):
+            n2c_correct_out[i] = [0]*5
+            train_notes = [random.randint(1, 12), random.randint(1, 12), random.randint(1, 12)]
+
+            n2c_notes[i] = [normValue(1, 12, train_notes[0]), normValue(1, 12, train_notes[1]), normValue(1, 12, train_notes[2])]
+
+            n2c_desired = findChord(train_notes)
+
+            n2c_correct_out[i][chordDict[n2c_desired]] = 1
+
+        a, c, _ = n2c_sess.run([n2c_accuracy, n2c_cross_entropy, n2c_train_step], feed_dict={n2c_inputs:n2c_notes, n2c_outputs: n2c_correct_out})
+
+        if (epoch + 1) % 1000 == 0:
+            print("Train data loss: " + str(c))
+            print("Train data accuracy: " + str(a))
+    save_path = saver.save(n2c_sess, "checkpoints/n2cBP.ckpt")
+    return n2c_sess
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
