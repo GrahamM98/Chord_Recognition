@@ -1,4 +1,4 @@
-from freq2Note import trainF2N
+from f2nBP import make_frequency_to_note_neural_net as trainF2N
 from notes2Chord import trainN2C
 from test_funcs import testF2N, testF2C
 from testn2c import testN2C
@@ -18,7 +18,7 @@ class TestObject:
 # value: object containing the option's description and method
 testDict = {
 	"trainf2n": TestObject("train the f2n neural net", trainF2N),
-	"trainf2c": TestObject("train the n2c neural net", trainN2C),
+	"trainn2c": TestObject("train the n2c neural net", trainN2C),
 	"testf2n": TestObject(f2n_description, testF2N),
 	"testn2c": TestObject(n2c_description,testN2C),
 	"testf2c": TestObject(f2c_description, testF2C),

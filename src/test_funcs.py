@@ -45,7 +45,7 @@ def getNetworkVal(prompt):
 # for F2N network to predict a note
 def testF2N():
 	prompt = "enter integer value between %d and %d " % (MIN_VAL, MAX_VAL)
-	intInput = getNetworkVal(prompt, MIN_VAL, MAX_VAL)
+	intInput = getNetworkVal(prompt)
 	notYetImpl()
 	# give note predicted
 # TODO connect to F2C	
