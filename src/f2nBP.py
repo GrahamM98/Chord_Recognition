@@ -75,6 +75,9 @@ def make_frequency_to_note_neural_net():
     #initialize session variables
     f2n_sess.run(f2n_init)
 
+    #set up saver to save network
+    saver = tf.train.Saver()
+
     batch_size = 100
     
     #test each octave individually
@@ -132,14 +135,15 @@ def make_frequency_to_note_neural_net():
                         correct_out_test[i][noteDict[f2n_desired]-1] = 1
                     except:
                         continue
-                a_test, _ = f2n_sess.run([f2n_accuracy, f2n_cross_entropy], feed_dict={f2n_inputs: f2n_freq_test, f2n_outputs: correct_out_test})
+                #a_test, _ = f2n_sess.run([f2n_accuracy, f2n_cross_entropy], feed_dict={f2n_inputs: f2n_freq_test, f2n_outputs: correct_out_test})
 
-                print("Train Data Loss: " + str(c))
-                print("Train Data Accuracy: " + str(100.00*a) + "%")
-                print("Test Data Accuracy: " + str(100.00*a_test) + "%")
+                #print("Train Data Loss: " + str(c))
+                #print("Train Data Accuracy: " + str(100.00*a) + "%")
+                #print("Test Data Accuracy: " + str(100.00*a_test) + "%")
                 #print("Test input data: ")
                 #for entry in f2n_freq_test:
                 #    print(entry)
-                print()
+                #print()
+    save_path = saver.save(f2n_sess, "checkpoints/f2nBP.ckpt")
 
     return f2n_sess
