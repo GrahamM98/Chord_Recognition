@@ -3,4 +3,4 @@ def trainN2C():
         #train second net
         print()
 
-trainN2C()
+#trainN2C()
