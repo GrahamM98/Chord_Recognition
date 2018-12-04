@@ -5,4 +5,4 @@ def trainF2N():
         #train first net
         print()
 
-trainF2N()
+#trainF2N()
