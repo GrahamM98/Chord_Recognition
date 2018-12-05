@@ -138,10 +138,10 @@ def note_to_chord_neural_net():
 
         a, c, _ = n2c_sess.run([n2c_accuracy, n2c_cross_entropy, n2c_train_step], feed_dict={n2c_inputs:n2c_notes, n2c_outputs: n2c_correct_out})
 
-        if (epoch + 1) % 1000 == 0:
-            print("Train data loss: " + str(c))
-            print("Train data accuracy: " + str(a))
-            print()
+        #if (epoch + 1) % 1000 == 0:
+            #print("Train data loss: " + str(c))
+            #print("Train data accuracy: " + str(a))
+            #print()
     save_path = saver.save(n2c_sess, "checkpoints/n2cBP.ckpt")
     return n2c_sess
 

@@ -83,7 +83,7 @@ def make_frequency_to_note_neural_net():
     #test each octave individually
     for octave in range(0, 6):
         
-        print("octave: " + str(octave))
+        #print("octave: " + str(octave))
                 
         #calculate the start and enc of each octave
         start = 110 * pow(2, octave)
