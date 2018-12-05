@@ -19,6 +19,15 @@ noteDict = {
         "G#": 12
     }
 
+chordDict = {
+        "Major": 0,
+        "Minor": 1,
+        "Augmented": 2,
+        "Diminished": 3,
+        "None": 4
+    }
+
+
 def notYetImpl():
     print("not yet implemented, choose another option")
 

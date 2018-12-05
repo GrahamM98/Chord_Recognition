@@ -22,7 +22,6 @@ chordDict = {
         "Minor": 1,
         "Augmented": 2,
         "Diminished": 3,
-        "None": 4
     }
 
 def findNote(nNum):
@@ -60,15 +59,15 @@ def findChord(notes):
 def note_to_chord_neural_net():
     # setting up inputs and outputs
     n2c_inputs = tf.placeholder(tf.float32, [None, 3])
-    n2c_outputs = tf.placeholder(tf.float32, [None, 5])
+    n2c_outputs = tf.placeholder(tf.float32, [None, 4])
 
     # setting up weights and biases for inputs->hiddens
     n2c_weights_in = tf.Variable(tf.random_normal([3, 15], stddev=0.03), name='n2c_weights_in')
     n2c_biases_in = tf.Variable(tf.random_normal([15]), name='n2c_biases_in')
 
     # setting up weights and biases for hiddens->outputs
-    n2c_weights_out = tf.Variable(tf.random_normal([15, 5], stddev=0.03), name='n2c_weights_out')
-    n2c_biases_out = tf.Variable(tf.random_normal([5]), name='n2c_biases_out')
+    n2c_weights_out = tf.Variable(tf.random_normal([15, 4], stddev=0.03), name='n2c_weights_out')
+    n2c_biases_out = tf.Variable(tf.random_normal([4]), name='n2c_biases_out')
 
     # setting up math for hidden layer output
     n2c_hidden_out = tf.add(tf.matmul(n2c_inputs, n2c_weights_in), n2c_biases_in)
@@ -108,22 +107,41 @@ def note_to_chord_neural_net():
     for epoch in range(10000):
         n2c_notes = [None]*batch_size
         n2c_correct_out = [None]*batch_size
+        train_notes = [None]*batch_size
 
         for i in range(batch_size):
-            n2c_correct_out[i] = [0]*5
-            train_notes = [random.randint(1, 12), random.randint(1, 12), random.randint(1, 12)]
+            train_notes[i] = [0]*3
+            n2c_correct_out[i] = [0]*4
 
-            n2c_notes[i] = [normValue(1, 12, train_notes[0]), normValue(1, 12, train_notes[1]), normValue(1, 12, train_notes[2])]
+            note1 = random.randint(1, 4)
+            note2 = random.randint(note1+3, note1+4)
+            note3 = random.randint(note2+3, note2+4)
 
-            n2c_desired = findChord(train_notes)
+            train_notes[i] = [note1, note2, note3]
 
-            n2c_correct_out[i][chordDict[n2c_desired]] = 1
+            if note2 == note1+3:
+                n2norm = -1
+            else:
+                n2norm = 1
+
+            if note3 == note2+3:
+                n3norm = -1
+            else:
+                n3norm = 1
+
+            n2c_notes[i] = [0, n2norm, n3norm]
+
+            n2c_desired = findChord(train_notes[i])
+
+            if n2c_desired != "None":
+                n2c_correct_out[i][chordDict[n2c_desired]] = 1
 
         a, c, _ = n2c_sess.run([n2c_accuracy, n2c_cross_entropy, n2c_train_step], feed_dict={n2c_inputs:n2c_notes, n2c_outputs: n2c_correct_out})
 
         if (epoch + 1) % 1000 == 0:
             print("Train data loss: " + str(c))
             print("Train data accuracy: " + str(a))
+            print()
     save_path = saver.save(n2c_sess, "checkpoints/n2cBP.ckpt")
     return n2c_sess
 
